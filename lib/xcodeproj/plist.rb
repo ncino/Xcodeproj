@@ -20,6 +20,20 @@ module Xcodeproj
       if file_in_conflict?(contents)
         raise Informative, "The file `#{path}` is in a merge conflict."
       end
+      Plist.read_from_string(contents)
+    end
+
+    # @return [Hash] Returns the native objects loaded from a property list
+    #         file.
+    #
+    # @param [#to_s] contents
+    #        The contents of a Plist file.
+    #
+    def self.read_from_string(contents)
+      unless !contents.nil? && !contents.empty?
+        raise Informative, "No contents were passed in to read_from_string."
+      end
+
       case Nanaimo::Reader.plist_type(contents)
       when :xml, :binary
         CFPropertyList.native_types(CFPropertyList::List.new(:data => contents).value)
